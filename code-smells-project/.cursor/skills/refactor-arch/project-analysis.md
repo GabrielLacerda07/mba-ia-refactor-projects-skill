@@ -76,7 +76,7 @@ Conte arquivos-fonte (código da aplicação), excluindo:
 
 - `node_modules/`, `.venv/`, `venv/`, `__pycache__/`
 - `*.db`, `package-lock.json`, `.git/`
-- Arquivos da skill (`.claude/`)
+- Arquivos da skill (`.cursor/`)
 
 ## 6. Entry point e composição
 

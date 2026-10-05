@@ -1,6 +1,6 @@
 # Criação de Skills — Refatoração Arquitetural Automatizada
 
-Skill **`refactor-arch`** para Claude Code: analisa, audita e refatora APIs backend para o padrão MVC, de forma agnóstica de tecnologia.
+Skill **`refactor-arch`** para Cursor: analisa, audita e refatora APIs backend para o padrão MVC, de forma agnóstica de tecnologia.
 
 ## Objetivo
 
@@ -61,7 +61,7 @@ Entregar uma Skill capaz de:
 
 ### Decisões de design
 
-A skill vive em `.claude/skills/refactor-arch/` (Claude Code) e foi **copiada para os 3 projetos**.
+A skill vive em `.cursor/skills/refactor-arch/` (convenção do Cursor) e foi **copiada para os 3 projetos**.
 
 | Arquivo | Área de conhecimento |
 |---|---|
@@ -245,24 +245,22 @@ A mesma skill funcionou em Flask monolítico, Express God Class e Flask parcialm
 
 ### Pré-requisitos
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) instalado e autenticado
+- [Cursor](https://cursor.com) com Agent Skills habilitado
 - Python 3.12+ (projetos 1 e 3) / Node.js 18+ (projeto 2)
-- Skill presente em `.claude/skills/refactor-arch/` de cada projeto
+- Skill presente em `.cursor/skills/refactor-arch/` de cada projeto
 
 ### Invocar a skill
 
-```bash
-# Projeto 1
-cd code-smells-project
-claude "/refactor-arch"
+No chat do Agent do Cursor, a partir da pasta do projeto (ou mencionando o path):
 
-# Projeto 2
-cd ../ecommerce-api-legacy
-claude "/refactor-arch"
+```
+/refactor-arch
+```
 
-# Projeto 3
-cd ../task-manager-api
-claude "/refactor-arch"
+Ou peça explicitamente, por exemplo:
+
+```
+Execute a skill refactor-arch neste projeto
 ```
 
 Na Fase 2, revise o relatório e responda `y` para autorizar a Fase 3.
@@ -302,6 +300,5 @@ cd task-manager-api && pip install -r requirements.txt && python seed.py && pyth
 
 ## Referências
 
-- [Claude Code: Skills](https://docs.anthropic.com/en/docs/claude-code/skills)
-- [Claude Code: Overview](https://docs.anthropic.com/en/docs/claude-code/overview)
-- [The Complete Guide to Building Skills for Claude](https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf)
+- Skills de projeto no Cursor: `.cursor/skills/<nome>/SKILL.md`
+- [Cursor Docs](https://docs.cursor.com) — Agent Skills / regras de projeto
