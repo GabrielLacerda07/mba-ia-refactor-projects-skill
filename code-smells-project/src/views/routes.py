@@ -5,9 +5,60 @@ from src.controllers import pedido_controller
 from src.controllers import health_controller
 
 
-def register_routes(app):
+def register_routes(app, db):
+    def _listar_produtos():
+        return produto_controller.listar(db)
+
+    def _buscar_produtos():
+        return produto_controller.buscar(
+            db,
+            request.args.get("q", ""),
+            request.args.get("categoria", None),
+            request.args.get("preco_min", None),
+            request.args.get("preco_max", None),
+        )
+
+    def _buscar_produto(id):
+        return produto_controller.buscar_por_id(db, id)
+
+    def _criar_produto():
+        return produto_controller.criar(db, request.get_json())
+
+    def _atualizar_produto(id):
+        return produto_controller.atualizar(db, id, request.get_json())
+
+    def _deletar_produto(id):
+        return produto_controller.deletar(db, id)
+
+    def _listar_usuarios():
+        return usuario_controller.listar(db)
+
+    def _buscar_usuario(id):
+        return usuario_controller.buscar_por_id(db, id)
+
+    def _criar_usuario():
+        return usuario_controller.criar(db, request.get_json())
+
+    def _login():
+        return usuario_controller.login(db, request.get_json())
+
+    def _criar_pedido():
+        return pedido_controller.criar(db, request.get_json())
+
+    def _listar_todos_pedidos():
+        return pedido_controller.listar_todos(db)
+
+    def _listar_pedidos_usuario(usuario_id):
+        return pedido_controller.listar_por_usuario(db, usuario_id)
+
+    def _atualizar_status_pedido(pedido_id):
+        return pedido_controller.atualizar_status(db, pedido_id, request.get_json())
+
+    def _relatorio_vendas():
+        return pedido_controller.relatorio_vendas(db)
+
     app.add_url_rule("/", "index", health_controller.index, methods=["GET"])
-    app.add_url_rule("/health", "health_check", health_controller.health_check, methods=["GET"])
+    app.add_url_rule("/health", "health_check", lambda: health_controller.health_check(db), methods=["GET"])
 
     app.add_url_rule("/produtos", "listar_produtos", _listar_produtos, methods=["GET"])
     app.add_url_rule("/produtos/busca", "buscar_produtos", _buscar_produtos, methods=["GET"])
@@ -36,68 +87,3 @@ def register_routes(app):
         methods=["PUT"],
     )
     app.add_url_rule("/relatorios/vendas", "relatorio_vendas", _relatorio_vendas, methods=["GET"])
-
-
-def _listar_produtos():
-    return produto_controller.listar()
-
-
-def _buscar_produtos():
-    return produto_controller.buscar(
-        request.args.get("q", ""),
-        request.args.get("categoria", None),
-        request.args.get("preco_min", None),
-        request.args.get("preco_max", None),
-    )
-
-
-def _buscar_produto(id):
-    return produto_controller.buscar_por_id(id)
-
-
-def _criar_produto():
-    return produto_controller.criar(request.get_json())
-
-
-def _atualizar_produto(id):
-    return produto_controller.atualizar(id, request.get_json())
-
-
-def _deletar_produto(id):
-    return produto_controller.deletar(id)
-
-
-def _listar_usuarios():
-    return usuario_controller.listar()
-
-
-def _buscar_usuario(id):
-    return usuario_controller.buscar_por_id(id)
-
-
-def _criar_usuario():
-    return usuario_controller.criar(request.get_json())
-
-
-def _login():
-    return usuario_controller.login(request.get_json())
-
-
-def _criar_pedido():
-    return pedido_controller.criar(request.get_json())
-
-
-def _listar_todos_pedidos():
-    return pedido_controller.listar_todos()
-
-
-def _listar_pedidos_usuario(usuario_id):
-    return pedido_controller.listar_por_usuario(usuario_id)
-
-
-def _atualizar_status_pedido(pedido_id):
-    return pedido_controller.atualizar_status(pedido_id, request.get_json())
-
-
-def _relatorio_vendas():
-    return pedido_controller.relatorio_vendas()

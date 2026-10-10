@@ -1,5 +1,4 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from src.database import get_db
 
 
 def _row_to_usuario(row, include_senha=False):
@@ -15,21 +14,20 @@ def _row_to_usuario(row, include_senha=False):
     return data
 
 
-def get_todos():
-    cursor = get_db().cursor()
+def get_todos(db):
+    cursor = db.cursor()
     cursor.execute("SELECT * FROM usuarios")
     return [_row_to_usuario(row) for row in cursor.fetchall()]
 
 
-def get_por_id(usuario_id):
-    cursor = get_db().cursor()
+def get_por_id(db, usuario_id):
+    cursor = db.cursor()
     cursor.execute("SELECT * FROM usuarios WHERE id = ?", (usuario_id,))
     row = cursor.fetchone()
     return _row_to_usuario(row) if row else None
 
 
-def criar(nome, email, senha, tipo="cliente"):
-    db = get_db()
+def criar(db, nome, email, senha, tipo="cliente"):
     cursor = db.cursor()
     senha_hash = generate_password_hash(senha)
     cursor.execute(
@@ -40,8 +38,8 @@ def criar(nome, email, senha, tipo="cliente"):
     return cursor.lastrowid
 
 
-def autenticar(email, senha):
-    cursor = get_db().cursor()
+def autenticar(db, email, senha):
+    cursor = db.cursor()
     cursor.execute("SELECT * FROM usuarios WHERE email = ?", (email,))
     row = cursor.fetchone()
     if not row:

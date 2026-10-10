@@ -30,24 +30,25 @@ def _validar_produto(dados, partial=False):
     return None
 
 
-def listar():
-    produtos = produto_model.get_todos()
+def listar(db):
+    produtos = produto_model.get_todos(db)
     return jsonify({"dados": produtos, "sucesso": True}), 200
 
 
-def buscar_por_id(produto_id):
-    produto = produto_model.get_por_id(produto_id)
+def buscar_por_id(db, produto_id):
+    produto = produto_model.get_por_id(db, produto_id)
     if not produto:
         return jsonify({"erro": "Produto não encontrado", "sucesso": False}), 404
     return jsonify({"dados": produto, "sucesso": True}), 200
 
 
-def criar(dados):
+def criar(db, dados):
     erro = _validar_produto(dados)
     if erro:
         return jsonify({"erro": erro}), 400
 
     produto_id = produto_model.criar(
+        db,
         dados["nome"],
         dados.get("descricao", ""),
         dados["preco"],
@@ -61,14 +62,15 @@ def criar(dados):
     }), 201
 
 
-def atualizar(produto_id, dados):
-    if not produto_model.get_por_id(produto_id):
+def atualizar(db, produto_id, dados):
+    if not produto_model.get_por_id(db, produto_id):
         return jsonify({"erro": "Produto não encontrado"}), 404
     erro = _validar_produto(dados)
     if erro:
         return jsonify({"erro": erro}), 400
 
     produto_model.atualizar(
+        db,
         produto_id,
         dados["nome"],
         dados.get("descricao", ""),
@@ -79,14 +81,14 @@ def atualizar(produto_id, dados):
     return jsonify({"sucesso": True, "mensagem": "Produto atualizado"}), 200
 
 
-def deletar(produto_id):
-    if not produto_model.get_por_id(produto_id):
+def deletar(db, produto_id):
+    if not produto_model.get_por_id(db, produto_id):
         return jsonify({"erro": "Produto não encontrado"}), 404
-    produto_model.deletar(produto_id)
+    produto_model.deletar(db, produto_id)
     return jsonify({"sucesso": True, "mensagem": "Produto deletado"}), 200
 
 
-def buscar(termo, categoria, preco_min, preco_max):
+def buscar(db, termo, categoria, preco_min, preco_max):
     if preco_min is not None and preco_min != "":
         preco_min = float(preco_min)
     else:
@@ -96,5 +98,5 @@ def buscar(termo, categoria, preco_min, preco_max):
     else:
         preco_max = None
 
-    resultados = produto_model.buscar(termo, categoria, preco_min, preco_max)
+    resultados = produto_model.buscar(db, termo, categoria, preco_min, preco_max)
     return jsonify({"dados": resultados, "total": len(resultados), "sucesso": True}), 200

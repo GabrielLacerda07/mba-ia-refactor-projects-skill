@@ -1,6 +1,3 @@
-from src.database import get_db
-
-
 def _row_to_produto(row):
     return {
         "id": row["id"],
@@ -14,21 +11,20 @@ def _row_to_produto(row):
     }
 
 
-def get_todos():
-    cursor = get_db().cursor()
+def get_todos(db):
+    cursor = db.cursor()
     cursor.execute("SELECT * FROM produtos")
     return [_row_to_produto(row) for row in cursor.fetchall()]
 
 
-def get_por_id(produto_id):
-    cursor = get_db().cursor()
+def get_por_id(db, produto_id):
+    cursor = db.cursor()
     cursor.execute("SELECT * FROM produtos WHERE id = ?", (produto_id,))
     row = cursor.fetchone()
     return _row_to_produto(row) if row else None
 
 
-def criar(nome, descricao, preco, estoque, categoria):
-    db = get_db()
+def criar(db, nome, descricao, preco, estoque, categoria):
     cursor = db.cursor()
     cursor.execute(
         "INSERT INTO produtos (nome, descricao, preco, estoque, categoria) VALUES (?, ?, ?, ?, ?)",
@@ -38,8 +34,7 @@ def criar(nome, descricao, preco, estoque, categoria):
     return cursor.lastrowid
 
 
-def atualizar(produto_id, nome, descricao, preco, estoque, categoria):
-    db = get_db()
+def atualizar(db, produto_id, nome, descricao, preco, estoque, categoria):
     cursor = db.cursor()
     cursor.execute(
         """
@@ -53,16 +48,15 @@ def atualizar(produto_id, nome, descricao, preco, estoque, categoria):
     return True
 
 
-def deletar(produto_id):
-    db = get_db()
+def deletar(db, produto_id):
     cursor = db.cursor()
     cursor.execute("DELETE FROM produtos WHERE id = ?", (produto_id,))
     db.commit()
     return True
 
 
-def buscar(termo, categoria=None, preco_min=None, preco_max=None):
-    cursor = get_db().cursor()
+def buscar(db, termo, categoria=None, preco_min=None, preco_max=None):
+    cursor = db.cursor()
     query = "SELECT * FROM produtos WHERE 1=1"
     params = []
 

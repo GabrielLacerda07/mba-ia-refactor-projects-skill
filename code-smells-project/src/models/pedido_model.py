@@ -1,9 +1,7 @@
-from src.database import get_db
 from src.config import settings
 
 
-def criar(usuario_id, itens):
-    db = get_db()
+def criar(db, usuario_id, itens):
     cursor = db.cursor()
     total = 0
 
@@ -66,8 +64,8 @@ def _agrupar_pedidos(rows):
     return [pedidos[pid] for pid in ordem]
 
 
-def get_por_usuario(usuario_id):
-    cursor = get_db().cursor()
+def get_por_usuario(db, usuario_id):
+    cursor = db.cursor()
     cursor.execute(
         """
         SELECT p.id, p.usuario_id, p.status, p.total, p.criado_em,
@@ -84,8 +82,8 @@ def get_por_usuario(usuario_id):
     return _agrupar_pedidos(cursor.fetchall())
 
 
-def get_todos():
-    cursor = get_db().cursor()
+def get_todos(db):
+    cursor = db.cursor()
     cursor.execute(
         """
         SELECT p.id, p.usuario_id, p.status, p.total, p.criado_em,
@@ -100,8 +98,7 @@ def get_todos():
     return _agrupar_pedidos(cursor.fetchall())
 
 
-def atualizar_status(pedido_id, novo_status):
-    db = get_db()
+def atualizar_status(db, pedido_id, novo_status):
     cursor = db.cursor()
     cursor.execute(
         "UPDATE pedidos SET status = ? WHERE id = ?",
@@ -111,8 +108,8 @@ def atualizar_status(pedido_id, novo_status):
     return True
 
 
-def relatorio_vendas():
-    cursor = get_db().cursor()
+def relatorio_vendas(db):
+    cursor = db.cursor()
 
     cursor.execute("SELECT COUNT(*) FROM pedidos")
     total_pedidos = cursor.fetchone()[0]

@@ -3,7 +3,7 @@ from src.models import pedido_model
 from src.config import settings
 
 
-def criar(dados):
+def criar(db, dados):
     if not dados:
         return jsonify({"erro": "Dados inválidos"}), 400
 
@@ -15,7 +15,7 @@ def criar(dados):
     if not itens:
         return jsonify({"erro": "Pedido deve ter pelo menos 1 item"}), 400
 
-    resultado = pedido_model.criar(usuario_id, itens)
+    resultado = pedido_model.criar(db, usuario_id, itens)
     if "erro" in resultado:
         return jsonify({"erro": resultado["erro"], "sucesso": False}), 400
 
@@ -26,17 +26,17 @@ def criar(dados):
     }), 201
 
 
-def listar_por_usuario(usuario_id):
-    pedidos = pedido_model.get_por_usuario(usuario_id)
+def listar_por_usuario(db, usuario_id):
+    pedidos = pedido_model.get_por_usuario(db, usuario_id)
     return jsonify({"dados": pedidos, "sucesso": True}), 200
 
 
-def listar_todos():
-    pedidos = pedido_model.get_todos()
+def listar_todos(db):
+    pedidos = pedido_model.get_todos(db)
     return jsonify({"dados": pedidos, "sucesso": True}), 200
 
 
-def atualizar_status(pedido_id, dados):
+def atualizar_status(db, pedido_id, dados):
     if not dados:
         return jsonify({"erro": "Dados inválidos"}), 400
 
@@ -44,10 +44,10 @@ def atualizar_status(pedido_id, dados):
     if novo_status not in settings.STATUS_PEDIDO_VALIDOS:
         return jsonify({"erro": "Status inválido"}), 400
 
-    pedido_model.atualizar_status(pedido_id, novo_status)
+    pedido_model.atualizar_status(db, pedido_id, novo_status)
     return jsonify({"sucesso": True, "mensagem": "Status atualizado"}), 200
 
 
-def relatorio_vendas():
-    relatorio = pedido_model.relatorio_vendas()
+def relatorio_vendas(db):
+    relatorio = pedido_model.relatorio_vendas(db)
     return jsonify({"dados": relatorio, "sucesso": True}), 200

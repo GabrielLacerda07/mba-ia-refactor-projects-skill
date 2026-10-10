@@ -1,9 +1,7 @@
 from flask import jsonify
-from src.database import get_db
 
 
-def health_check():
-    db = get_db()
+def health_check(db):
     cursor = db.cursor()
     cursor.execute("SELECT 1")
     cursor.execute("SELECT COUNT(*) FROM produtos")

@@ -1,22 +1,9 @@
 import sqlite3
-from src.config import settings
-
-_connection = None
 
 
-def get_db():
-    """Retorna conexão SQLite da aplicação (inicializada no boot)."""
-    global _connection
-    if _connection is None:
-        _connection = init_db(settings.DATABASE_PATH)
-    return _connection
-
-
-def init_db(db_path=None):
-    """Cria conexão, schema e seed inicial se necessário."""
-    global _connection
-    path = db_path or settings.DATABASE_PATH
-    conn = sqlite3.connect(path, check_same_thread=False)
+def create_database(db_path):
+    """Cria conexão, schema e seed. A conexão fica com quem chamou — sem estado global."""
+    conn = sqlite3.connect(db_path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -94,5 +81,4 @@ def init_db(db_path=None):
         )
         conn.commit()
 
-    _connection = conn
     return conn

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from src.config import settings
-from src.database import init_db
+from src.database import create_database
 from src.views.routes import register_routes
 from src.middlewares.error_handler import register_error_handlers
 
@@ -12,8 +12,8 @@ def create_app():
     app.config["DEBUG"] = settings.DEBUG
     CORS(app)
 
-    init_db(settings.DATABASE_PATH)
-    register_routes(app)
+    db = create_database(settings.DATABASE_PATH)
+    register_routes(app, db)
     register_error_handlers(app)
     return app
 

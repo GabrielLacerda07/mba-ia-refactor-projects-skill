@@ -231,14 +231,25 @@ def get_db():
     return db_connection
 ```
 
-**Depois:**
+**Depois:** a factory só devolve a conexão. O entry point injeta `db` nas rotas, que repassam aos controllers e models. Não guarde a conexão em variável de módulo.
+
 ```python
-def get_connection(db_path):
+def create_database(db_path):
     conn = sqlite3.connect(db_path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
-# Em app startup: app.config['DB'] = init_db(settings.DATABASE_PATH)
+# src/app.py
+db = create_database(settings.DATABASE_PATH)
+register_routes(app, db)
+
+# views/routes.py
+def register_routes(app, db):
+    app.add_url_rule("/produtos", "listar", lambda: produto_controller.listar(db))
+
+# models
+def get_todos(db):
+    cursor = db.cursor()
 ```
 
 ---

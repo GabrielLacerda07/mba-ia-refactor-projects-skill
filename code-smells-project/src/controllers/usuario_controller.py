@@ -2,19 +2,19 @@ from flask import jsonify
 from src.models import usuario_model
 
 
-def listar():
-    usuarios = usuario_model.get_todos()
+def listar(db):
+    usuarios = usuario_model.get_todos(db)
     return jsonify({"dados": usuarios, "sucesso": True}), 200
 
 
-def buscar_por_id(usuario_id):
-    usuario = usuario_model.get_por_id(usuario_id)
+def buscar_por_id(db, usuario_id):
+    usuario = usuario_model.get_por_id(db, usuario_id)
     if not usuario:
         return jsonify({"erro": "Usuário não encontrado"}), 404
     return jsonify({"dados": usuario, "sucesso": True}), 200
 
 
-def criar(dados):
+def criar(db, dados):
     if not dados:
         return jsonify({"erro": "Dados inválidos"}), 400
 
@@ -25,11 +25,11 @@ def criar(dados):
     if not nome or not email or not senha:
         return jsonify({"erro": "Nome, email e senha são obrigatórios"}), 400
 
-    usuario_id = usuario_model.criar(nome, email, senha)
+    usuario_id = usuario_model.criar(db, nome, email, senha)
     return jsonify({"dados": {"id": usuario_id}, "sucesso": True}), 201
 
 
-def login(dados):
+def login(db, dados):
     if not dados:
         return jsonify({"erro": "Dados inválidos"}), 400
 
@@ -39,7 +39,7 @@ def login(dados):
     if not email or not senha:
         return jsonify({"erro": "Email e senha são obrigatórios"}), 400
 
-    usuario = usuario_model.autenticar(email, senha)
+    usuario = usuario_model.autenticar(db, email, senha)
     if not usuario:
         return jsonify({"erro": "Email ou senha inválidos", "sucesso": False}), 401
 
